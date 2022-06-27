@@ -5,6 +5,7 @@
 package it.polito.tdp.yelp;
 
 import java.net.URL;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -48,7 +49,8 @@ public class FXMLController {
     	this.cmbLocale.getItems().clear();
     	String citta = this.cmbCitta.getValue();
     	if(citta != null) {
-    		//TODO popolare la tendina dei locali per la città selezionata
+    		
+    		this.cmbLocale.getItems().addAll(this.model.getAllCityBusinesses(citta));
     		
     	}
     }
@@ -56,10 +58,23 @@ public class FXMLController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	
+    	txtResult.clear();
+    	this.model.creaGrafo(cmbLocale.getValue());
+    	txtResult.setText(this.model.getMaxReview());
+    	
     }
 
     @FXML
     void doTrovaMiglioramento(ActionEvent event) {
+    	txtResult.clear();
+    	List<Review> lista = new ArrayList<Review>(this.model.ricercaCammino());
+    	
+    	for(Review r : lista) {
+    		txtResult.appendText(r.getReviewId() + "\n");
+    	}
+    	
+    	txtResult.appendText("" + Math.abs(ChronoUnit.DAYS.between(lista.get(0).getDate(),lista.get(lista.size()-1).getDate())));
+    
     	
     }
 
@@ -75,5 +90,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	
+    	this.cmbCitta.getItems().addAll(this.model.getAllCities());
     }
 }

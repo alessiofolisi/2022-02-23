@@ -48,16 +48,18 @@ public class YelpDao {
 		}
 	}
 	
-	public List<Review> getAllReviews(){
-		String sql = "SELECT * FROM Reviews";
+	public List<Review> getAllReviews(Business b){
+		String sql = "SELECT * "
+				+ "FROM Reviews "
+				+ "WHERE business_id = ? ";
 		List<Review> result = new ArrayList<Review>();
 		Connection conn = DBConnect.getConnection();
 
 		try {
 			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, b.getBusinessId());
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
-
 				Review review = new Review(res.getString("review_id"), 
 						res.getString("business_id"),
 						res.getString("user_id"),
